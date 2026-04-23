@@ -1,7 +1,7 @@
 {
-  "name": "arcade-locator-api",
-  "version": "0.1.0",
-  "description": "Discover new arcades nearby, see what games that have and checkout what options they have available",
+  "name": "arcade-finder-api",
+  "version": "0.2.1",
+  "description": "A comprehensive REST API to discover nearby arcades, explore their game inventories, and view detailed venue information including pricing, parking, and amenities.",
   "keywords": [
     "arcade",
     "video games",
@@ -10,14 +10,14 @@
     "arcade information"
   ],
   "author": "R. Brandon Plentl <bplentl@gmail.com> (http://mrplentl.com)",
-  "homepage": "https://github.com/MrPlentl/ArcadeLocator-API/blob/master/README.md",
+  "homepage": "https://github.com/MrPlentl/Arcade-Finder-API/blob/master/README.md",
   "bugs": {
-    "url": "https://github.com/MrPlentl/ArcadeLocator-API/issues",
+    "url": "https://github.com/MrPlentl/Arcade-Finder-API/issues",
     "email": "bplentl@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "github:MrPlentl/ArcadeLocator-API"
+    "url": "github:MrPlentl/Arcade-Finder-API"
   },
   "license": "GPL-3.0",
   "main": "index.js",
@@ -26,13 +26,19 @@
     "build": "tsc && copyfiles -u 1 src/**/*.yaml dist",
     "start": "node dist/index.js",
     "lint": "eslint src/**/*.ts",
-    "format": "prettier --write '**/*.{js,jsx,ts,tsx,json}'"
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
+    "db:generate": "sequelize-cli migration:generate --name",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo",
+    "db:seed:all": "sequelize-cli db:seed:all",
+    "db:seed:undo:all": "sequelize-cli db:seed:undo:all"
   },
   "type": "module",
   "dependencies": {
     "axios": "^1.13.4",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
+    "csv-parse": "^6.1.0",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-openapi-validator": "^5.6.2",
@@ -43,8 +49,7 @@
     "morgan": "^1.10.1",
     "pg": "^8.18.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.7",
-    "uuid": "^13.0.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
@@ -59,6 +64,7 @@
     "globals": "^17.3.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1",
+    "sequelize": "^6.37.8",
     "sequelize-cli": "^6.6.5",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",

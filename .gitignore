@@ -130,3 +130,4 @@ dist
 .pnp.*
 
 POSTGRES_info.txt
+database/seeders/20260205231721-user-data.js
