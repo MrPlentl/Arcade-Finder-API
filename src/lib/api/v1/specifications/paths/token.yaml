@@ -1,10 +1,47 @@
 post:
+    tags:
+        - Authentication
     description: Incoming request to get an Authentication token using an apikey
     x-eov-operation-id: getAccessToken
     x-eov-operation-handler: auth
+    parameters:
+        - name: apikey
+          in: header
+          description: The API key required to authenticate and receive an access token
+          required: true
+          schema:
+              type: string
     responses:
         200:
             description: OK
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            access_token:
+                                type: string
+                                description: JWT - Authentication token
+                            refresh_token:
+                                type: string
+                                description: Refresh token
+                                example: "Not Suported"
+                            token_type:
+                                type: string
+                                description: Token type
+                                example: "Bearer"
+                            expires_in:
+                                type: integer
+                                description: Token expiration time
+                                example: 3600
+                            expiration:
+                                type: integer
+                                description: Token expiration time as a Unix timestamp
+                                example: 1777070306
+                            scope:
+                                type: string
+                                description: Token scope
+                                example: "Arcade Locator API"
         400:
             description: Missing apikey
             content:
@@ -13,8 +50,21 @@ post:
                         type: object
                         properties:
                             error:
-                                type: string
-                                description: Error Message
+                                type: object
+                                properties:
+                                    type:
+                                        type: string
+                                        example: "Bad Request"
+                                    code:
+                                        type: integer
+                                        example: 4001
+                                    message:
+                                        type: string
+                                        example: "The apikey is missing from request headers"
+                                    details:
+                                        type: object
+                                        example:
+                                            missing_field: "apikey"
         401:
             description: The apikey is invalid
             content:
@@ -23,5 +73,18 @@ post:
                         type: object
                         properties:
                             error:
-                                type: string
-                                description: Error Message
+                                type: object
+                                properties:
+                                    type:
+                                        type: string
+                                        example: "Unauthorized"
+                                    code:
+                                        type: integer
+                                        example: 4002
+                                    message:
+                                        type: string
+                                        example: "apikey is invalid."
+                                    details:
+                                        type: object
+                                        example:
+                                            bad_apikey: "The apikey you are using is invalid or has Expired. Generate a new apikey from your profile."
