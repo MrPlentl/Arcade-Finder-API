@@ -1,0 +1,31 @@
+get:
+    tags:
+        - Utility
+    description: |
+        Welcome to the Arcade Finder API!
+    operationId: getIndex
+    x-eov-operation-id: getIndex
+    x-eov-operation-handler: index
+    responses:
+        "200":
+            description: OK
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            message:
+                                type: string
+                                description: Welcome message
+                            details:
+                                type: object
+                                properties:
+                                    name:
+                                        type: string
+                                        description: API Name
+                                    version:
+                                        type: string
+                                        description: API Version
+                                    documentation:
+                                        type: string
+                                        description: URL to API documentation
