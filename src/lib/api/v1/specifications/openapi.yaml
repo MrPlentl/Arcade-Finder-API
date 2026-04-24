@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: Arcade Locator API
+  title: Arcade Finder API
   description: |-
-    The Arcade Locator API provides a comprehensive set of endpoints to discover, track, and manage arcade venues and their machine inventory.
+    The Arcade Finder API provides a comprehensive set of endpoints to discover, track, and manage arcade venues and their machine inventory.
 
     Users can search for arcades by location, find specific games (like Pinball, retro cabinets, or modern rhythm games), and contribute by adding new venues, machines, and related media such as video game movies and shows.
 
@@ -12,96 +12,62 @@ info:
   license:
     name: GPLv3
     url: https://www.gnu.org/licenses/gpl-3.0.en.html
-  version: 0.0.59
+  version: 0.0.60
 externalDocs:
-  description: Find out more about the Arcade Locator API
-  url: http://swagger.io
+  description: Find out more about the Arcade Finder API
+  url: http://mrplentl.com
 servers:
-  - url: /identity
-    description: Base url to handle authentication requests
   - url: /api/v1
     description: All API endpoints are relative to the base URL.
 tags:
-  - name: core
-    description: Core Operations of the Arcade Locator API
-  - name: movies
+  - name: Venues
+    description: Operations to search and manage Arcade Venues
+    externalDocs:
+      description: Find more Arcades to add from Google maps
+      url: https://maps.app.goo.gl/c9gQJVrmeMdtpw5GA
+  - name: Games
+    description: Everything about Games
+    externalDocs:
+      description: Find more Arcade games to add on IGDB
+      url: https://www.igdb.com/platforms/arcade/games
+  - name: Movies
     description: Everything about Movies
     externalDocs:
       description: Find more movies to add
       url: https://letterboxd.com/pillager/list/video-game-movies/
-  - name: shows
+  - name: Shows
     description: Everything about Shows
-  - name: extras
-    description: Extra data
-  - name: authentication
+  - name: Authentication
     description: Authentication endpoints for various tasks
-  - name: definitions
-    description: Shared model and component definitions
-  - name: venue
-    description: Operations to search and manage Arcade Venues
-    externalDocs:
-      description: Find out more about our store
-      url: http://swagger.io
-  - name: user
-    description: Operations about user
+  - name: Utility
+    description: Utility endpoints for various tasks
 paths:
   /:
-    $ref: "./paths/root.yaml"
+    $ref: "./paths/index.yaml"
   /apikey/{userId}:
     $ref: "./paths/apikey.yaml"
+  # Authentication / IAM
+  /auth/login:
+    $ref: "./paths/login.yaml"
+  /auth/register:
+    $ref: "./paths/register.yaml"
+  /auth/token:
+    $ref: "./paths/token.yaml"
+  /game/{gameId}:
+    $ref: "./paths/game.yaml"
   /games:
     $ref: "./paths/games.yaml"
   /gamesTest:
     $ref: "./paths/gamesTest.yaml"
-  /game/{gameId}:
-    $ref: "./paths/game.yaml"
-  /movies:
-    $ref: "./paths/movies.yaml"
   /movie/{movieId}:
     $ref: "./paths/movie.yaml"
-  /shows:
-    $ref: "./paths/shows.yaml"
+  /movies:
+    $ref: "./paths/movies.yaml"
   /show/{showId}:
     $ref: "./paths/show.yaml"
+  /shows:
+    $ref: "./paths/shows.yaml"
   /venue/search:
     $ref: "./paths/venue_search.yaml"
   /venue/{venueId}:
     $ref: "./paths/venue.yaml"
-  # /identity/
-
-  /login:
-    $ref: "./paths/login.yaml"
-  /register:
-    $ref: "./paths/register.yaml"
-  /token:
-    $ref: "./paths/token.yaml"
-    # components:
-#   securitySchemes:
-
-#     petstore_auth:
-
-#       type: oauth2
-
-#       flows:
-
-#         implicit:
-
-#           authorizationUrl: http://localhost:8080/identity/token
-
-#           scopes:
-
-#             "write:pets": modify pets in your account
-
-#             "read:pets": read your pets
-
-#     api_key:
-
-#       type: apiKey
-
-#       name: api_key
-
-#       in: header
-
-# ApiKeyAuth:
-
-#   $ref: './components/securitySchemes.yaml#/ApiKeyAuth'
