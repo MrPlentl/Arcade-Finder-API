@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Specifications</title>
+
+  <!-- Swagger UI -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.14/swagger-ui.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.14/swagger-ui-bundle.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f8fafc;
+      color: #334155;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 2rem;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #0f172a;
+      white-space: nowrap;
+    }
+
+    header span {
+      color: #6366f1;
+    }
+
+    #spec-select {
+      margin-left: auto;
+      padding: 0.45rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      color: #334155;
+      font-size: 0.875rem;
+      cursor: pointer;
+      min-width: 220px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    #spec-select:focus {
+      border-color: #6366f1;
+    }
+
+    #status {
+      padding: 3rem;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    #status.error {
+      color: #ef4444;
+    }
+
+    #swagger-ui {
+      padding: 1rem 2rem 3rem;
+    }
+
+    .swagger-ui .topbar { display: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>API <span>Specifications</span></h1>
+    <select id="spec-select">
+      <option value="" disabled selected>Loading specs…</option>
+    </select>
+  </header>
+
+  <div id="status">Select a specification above to get started.</div>
+  <div id="swagger-ui"></div>
+
+  <script>
+    const select = document.getElementById('spec-select');
+    const status = document.getElementById('status');
+    let ui = null;
+
+    // Fetch list of available spec files from Express endpoint
+    async function loadSpecList() {
+      try {
+        const res = await fetch('/api/specs');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const files = await res.json();
+
+        if (!files.length) {
+          status.textContent = 'No spec files found in the specifications directory.';
+          return;
+        }
+
+        select.innerHTML = '<option value="" disabled selected>Choose a spec…</option>';
+        files.forEach(file => {
+          const opt = document.createElement('option');
+          opt.value = file;
+          opt.textContent = file;
+          select.appendChild(opt);
+        });
+
+        // Auto-load the first spec
+        select.value = files[0];
+        loadSpec(files[0]);
+      } catch (err) {
+        status.className = 'error';
+        status.textContent = `Could not load spec list: ${err.message}. Make sure the Express route is configured (see README comment below).`;
+      }
+    }
+
+    function loadSpec(filename) {
+      status.style.display = 'none';
+
+      if (ui) {
+        // Destroy existing instance by clearing the container
+        document.getElementById('swagger-ui').innerHTML = '';
+      }
+
+      ui = SwaggerUIBundle({
+        url: `/api/specs/${filename}`,
+        dom_id: '#swagger-ui',
+        presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+        layout: 'BaseLayout',
+        deepLinking: true,
+        tryItOutEnabled: true,
+      });
+    }
+
+    select.addEventListener('change', e => {
+      if (e.target.value) loadSpec(e.target.value);
+    });
+
+    loadSpecList();
+  </script>
+
+  <!--
+    ============================================================
+    EXPRESS SETUP — add this to your server entry point:
+    ============================================================
+
+    const path = require('path');
+    const fs   = require('fs');
+
+    const SPECS_DIR = path.join(__dirname, 'src/lib/api/v1/specifications');
+
+    // List available spec files
+    app.get('/api/specs', (req, res) => {
+      const files = fs.readdirSync(SPECS_DIR)
+        .filter(f => /\.(json|yaml|yml)$/.test(f));
+      res.json(files);
+    });
+
+    // Serve individual spec files
+    app.use('/api/specs', express.static(SPECS_DIR));
+
+    ============================================================
+    Then place this file at:  public/specs.html
+    Access it at:             http://localhost:<PORT>/specs.html
+    ============================================================
+  -->
+
+</body>
+</html>

@@ -4,7 +4,7 @@ A comprehensive REST API to discover nearby arcades, explore their game inventor
 
 ## Features
 
-- **Arcade Locator**: Find arcades near a specific zipcode or distance.
+- **Arcade Finder**: Find arcades near a specific zipcode or distance.
 - **Game Inventories**: Explore the catalog of games available at each venue.
 - **Venue Details**: View comprehensive information including pricing, parking, contact info, and amenities.
 

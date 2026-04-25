@@ -12,7 +12,7 @@ info:
   license:
     name: GPLv3
     url: https://www.gnu.org/licenses/gpl-3.0.en.html
-  version: 0.0.62
+  version: 0.0.63
 externalDocs:
   description: Find out more about the Arcade Finder API
   url: http://mrplentl.com
@@ -44,12 +44,16 @@ tags:
 paths:
   /:
     $ref: "./paths/index.yaml"
+  # @TODO: Complete cleaning up the auth endpoints
+
   /apikey/{userId}:
     $ref: "./paths/apikey.yaml"
   /auth/login:
     $ref: "./paths/login.yaml"
   /auth/register:
     $ref: "./paths/register.yaml"
+  ######
+
   /auth/token:
     $ref: "./paths/token.yaml"
   /game/{gameId}:
