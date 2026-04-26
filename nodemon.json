@@ -1,5 +1,5 @@
 {
-	"verbose": true,
+  "verbose": true,
   "watch": ["src"],
   "ext": "ts,json,yaml",
   "ignore": ["src/**/*.test.ts"],
