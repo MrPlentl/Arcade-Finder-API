@@ -12,7 +12,7 @@ info:
   license:
     name: GPLv3
     url: https://www.gnu.org/licenses/gpl-3.0.en.html
-  version: 0.0.64
+  version: 0.0.65
 externalDocs:
   description: Find out more about the Arcade Finder API
   url: http://mrplentl.com
@@ -45,32 +45,32 @@ paths:
   /:
     $ref: "./paths/index.yaml"
   # @TODO: Complete cleaning up the auth endpoints
-
   /apikey/{userId}:
     $ref: "./paths/apikey.yaml"
   /auth/login:
     $ref: "./paths/login.yaml"
   /auth/register:
     $ref: "./paths/register.yaml"
-  ######
-
   /auth/token:
     $ref: "./paths/token.yaml"
-  /game/{gameId}:
-    $ref: "./paths/game.yaml"
+  ######
+
   /games:
-    $ref: "./paths/games.yaml"
+    $ref: "./paths/games.yaml#/Collection"
+  /games/{gameId}:
+    $ref: "./paths/games.yaml#/Single"
+  /movies:
+    $ref: "./paths/movies.yaml#/Collection"
+  /movies/{movieId}:
+    $ref: "./paths/movies.yaml#/Single"
+  /shows:
+    $ref: "./paths/shows.yaml#/Collection"
+  /shows/{showId}:
+    $ref: "./paths/shows.yaml#/Single"
+  /venues:
+    $ref: "./paths/venues.yaml#/Collection"
+  /venues/{venueId}:
+    $ref: "./paths/venues.yaml#/Single"
+    # @TODO: Remove this test endpoint after testing is complete    
   /gamesTest:
     $ref: "./paths/gamesTest.yaml"
-  /movie/{movieId}:
-    $ref: "./paths/movie.yaml"
-  /movies:
-    $ref: "./paths/movies.yaml"
-  /show/{showId}:
-    $ref: "./paths/show.yaml"
-  /shows:
-    $ref: "./paths/shows.yaml"
-  /venue/search:
-    $ref: "./paths/venue_search.yaml"
-  /venue/{venueId}:
-    $ref: "./paths/venue.yaml"
