@@ -1,10 +1,10 @@
 {
-	"error": {
-		"code": 400,
-		"message": "Invalid request: Missing required field 'email'.",
-		"type": "Bad Request",
-		"details": {
-			"missing_field": "email"
-		}
-	}
+  "error": {
+    "code": 400,
+    "message": "Invalid request: Missing required field 'email'.",
+    "type": "Bad Request",
+    "details": {
+      "missing_field": "email"
+    }
+  }
 }

@@ -1,13 +1,13 @@
-import bcrypt from "bcrypt";
-import crypto from "crypto";
-import jwt from "jsonwebtoken";
-import { hasExpiredDate } from "../../../utils/helpers.js";
-import { predefinedError } from "../../../utils/error.js";
-import { Apikey } from "../../../../../database/models/index.js";
-import { log4js } from "../../../../../utils/log4js.js";
-import env from "../../../../utils/environment.js";
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import { hasExpiredDate } from '../../../utils/helpers.js';
+import { predefinedError } from '../../../utils/error.js';
+import { Apikey } from '../../../../../database/models/index.js';
+import { log4js } from '../../../../../utils/log4js.js';
+import env from '../../../../utils/environment.js';
 
-const logger = log4js.getLogger("[controller|handlers|auth]"); // Sets up the logger with the [app] string prefix
+const logger = log4js.getLogger('[controller|handlers|auth]'); // Sets up the logger with the [app] string prefix
 
 /**
  * Creates a lookup has for the given apikey that will be used to locate the valid apikey Hash
@@ -16,8 +16,8 @@ const logger = log4js.getLogger("[controller|handlers|auth]"); // Sets up the lo
  * @returns
  */
 export async function generateLookupHash(apikey: string): Promise<string> {
-  logger.trace("generateLookupHash:", "apikey-****");
-  return crypto.createHash("sha256").update(apikey).digest("hex").slice(0, 16);
+  logger.trace('generateLookupHash:', 'apikey-****');
+  return crypto.createHash('sha256').update(apikey).digest('hex').slice(0, 16);
 }
 
 /**
@@ -27,22 +27,21 @@ export async function generateLookupHash(apikey: string): Promise<string> {
  * @returns
  */
 async function fetchApikeyByLookupHash(lookupHash: string): Promise<any> {
-  logger.trace("fetchApikeyByLookupHash:", lookupHash);
+  logger.trace('fetchApikeyByLookupHash:', lookupHash);
   let apikeyRecord; // Declare before try block
   try {
     apikeyRecord = await Apikey.getByLookupHash(lookupHash);
   } catch (error: any) {
-    const newError: any = predefinedError("Apikey.getByLookupHash");
+    const newError: any = predefinedError('Apikey.getByLookupHash');
     newError.code = error.code;
     newError.details = { sql_error: error.message };
-    newError.message =
-      "Internal Error: Unable to validate access_token at this time.";
+    newError.message = 'Internal Error: Unable to validate access_token at this time.';
     throw newError;
   }
 
   // Verify ApiKey is not expired
   if (!apikeyRecord?.expires_at || hasExpiredDate(apikeyRecord.expires_at)) {
-    const newError: any = predefinedError("ApiKeyExpired");
+    const newError: any = predefinedError('ApiKeyExpired');
     if (apikeyRecord?.expires_at) {
       newError.details.trace = {
         apikey_id: `${apikeyRecord?.id}.${lookupHash}`,
@@ -62,7 +61,7 @@ async function fetchApikeyByLookupHash(lookupHash: string): Promise<any> {
  * @returns
  */
 export async function validateApiKey(providedKey: string): Promise<number> {
-  logger.trace("validateApiKey");
+  logger.trace('validateApiKey');
   const lookupHash = await generateLookupHash(providedKey);
 
   // Get the stored hash using the lookup hash
@@ -73,7 +72,7 @@ export async function validateApiKey(providedKey: string): Promise<number> {
     return apikeyRecord?.id;
   }
 
-  throw predefinedError("ApiKeyExpired");
+  throw predefinedError('ApiKeyExpired');
 }
 
 /**
@@ -82,9 +81,9 @@ export async function validateApiKey(providedKey: string): Promise<number> {
  *
  */
 export function authenticateToken(req: any) {
-  logger.debug("authenticateToken");
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  logger.debug('authenticateToken');
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
   const JWT_SECRET: string | undefined = env.JWT_SECRET;
 
   if (!token || !JWT_SECRET) {

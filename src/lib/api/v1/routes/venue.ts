@@ -1,29 +1,29 @@
-import { Request, Response } from "express";
-import { PERMISSIONS } from "../../utils/constants.js";
+import { Request, Response } from 'express';
+import { PERMISSIONS } from '../../utils/constants.js';
 
-import * as auth from "../middleware/auth.js";
-import { setStdRespHeaders } from "../middleware/index.js";
-import * as controller from "../controllers/venue.js";
-import { standardResponse } from "../../utils/helpers.js";
+import * as auth from '../middleware/auth.js';
+import { setStdRespHeaders } from '../middleware/index.js';
+import * as controller from '../controllers/venue.js';
+import { standardResponse } from '../../utils/helpers.js';
 
-import { log4js } from "../../../../utils/log4js.js";
-const logger = log4js.getLogger("[routes|venue]"); // Sets up the logger with the [app] string prefix
+import { log4js } from '../../../../utils/log4js.js';
+const logger = log4js.getLogger('[routes|venue]'); // Sets up the logger with the [app] string prefix
 
 ////////////////////////
 // READ
 
 /**
- * Returns a complete list of movies that are based on Video Games
+ * Returns information about a single venue based on the provided slug or ID
  *
  * GET /venue
- * @param {*} req
- * @param {*} res
- * @returns
+ * @param {*} req - Express request object
+ * @param {*} res - Express response object
+ * @returns {Promise<Response>} Standardized response containing venue data
  */
-const getVenue = async (req: Request, res: Response) => {
-	logger.trace("getVenue");
-	const [statusCode, response] = await controller.fetchVenue(req);
-	return res.status(statusCode as number).send(standardResponse(response, false));
+const getVenueById = async (req: Request, res: Response): Promise<Response> => {
+  logger.trace('getVenueById');
+  const response = await controller.fetchVenueById(req);
+  return res.status(200).send(standardResponse(response, false));
 };
 
 /**
@@ -34,23 +34,23 @@ const getVenue = async (req: Request, res: Response) => {
  * @param {*} res
  * @returns
  */
-const getVenuesByParams = async (req: Request, res: Response) => {
-	logger.trace("getVenuesByParams");
-	const [statusCode, response] = await controller.fetchVenuesByParams(req);
-	return res.status(statusCode as number).send(standardResponse(response));
+const getVenues = async (req: Request, res: Response) => {
+  logger.trace('getVenues');
+  const response = await controller.fetchVenues(req);
+  return res.status(200).send(standardResponse(response));
 };
 
 export default {
-	getVenuesByParams: [
-		setStdRespHeaders,
-		auth.authenticateToken,
-		auth.hasRequiredPermission(PERMISSIONS.READ),
-		getVenuesByParams,
-	],
-	getVenue: [
-		setStdRespHeaders,
-		auth.authenticateToken,
-		auth.hasRequiredPermission(PERMISSIONS.READ),
-		getVenue,
-	],
+  getVenues: [
+    setStdRespHeaders,
+    auth.authenticateToken,
+    auth.hasRequiredPermission(PERMISSIONS.READ),
+    getVenues,
+  ],
+  getVenueById: [
+    setStdRespHeaders,
+    auth.authenticateToken,
+    auth.hasRequiredPermission(PERMISSIONS.READ),
+    getVenueById,
+  ],
 };

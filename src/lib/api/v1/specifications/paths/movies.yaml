@@ -1,111 +1,261 @@
-get:
-    tags:
-        - movies
-    summary: Get a list of Video Game Movies
-    description: Collection of movies based on video games
-    x-eov-operation-id: getMovies
-    x-eov-operation-handler: movie
+Collection:
+    get:
+        tags:
+            - Movies
+        summary: Get a list of Video Game Movies
+        description: Collection of movies based on video games
+        x-eov-operation-id: getMovies
+        x-eov-operation-handler: movie
+        parameters:
+            - in: query
+              $ref: "../components/parameters.yaml#/Movies/SortBy"
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                $ref: "../components/responses.yaml#/Movies/Movie"
+            400:
+                description: Invalid tag value
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Main error Message
+                                errors:
+                                    type: array
+                                    description: Error details
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+    post:
+        tags:
+            - Movies
+        summary: Create a new movie
+        description: Creates a new single movie
+        operationId: createMovie
+        x-eov-operation-id: createMovie
+        x-eov-operation-handler: movie
+        requestBody:
+            description: Create a new movie in the database
+            content:
+                application/json:
+                    schema:
+                        $ref: "../components/requestBodies.yaml#/Movie"
+            required: true
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            items:
+                                $ref: "../components/responses.yaml#/Movies/Movie"
+            400:
+                description: Invalid ID supplied
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            404:
+                description: Movie not found
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+                                    description: Response status type
+                                message:
+                                    type: string
+                                    description: Response Message
+Single:
     parameters:
-        - in: query
-          $ref: "../components/parameters.yaml#/Movies/SortBy"
-    responses:
-        200:
-            description: Successful operation
-            content:
-                application/json:
-                    schema:
-                        type: array
-                        items:
+        $ref: "../components/parameters.yaml#/Movies/MovieId"
+    get:
+        tags:
+            - Movies
+        summary: Find movie by ID
+        description: Returns a single movie
+        operationId: getMovieById
+        x-eov-operation-id: getMovieById
+        x-eov-operation-handler: movie
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
                             $ref: "../components/responses.yaml#/Movies/Movie"
-        400:
-            description: Invalid tag value
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            message:
-                                type: string
-                                description: Main error Message
-                            errors:
-                                type: array
-                                description: Error details
-        401:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
-        403:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
-post:
-    tags:
-        - movies
-    summary: Create a new movie
-    description: Creates a new single movie
-    operationId: createMovie
-    x-eov-operation-id: createMovie
-    x-eov-operation-handler: movie
-    requestBody:
-        description: Create a new movie in the database
-        content:
-            application/json:
-                schema:
-                    $ref: "../components/requestBodies.yaml#/Movie"
-        required: true
-    responses:
-        200:
-            description: Successful operation
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        items:
+            400:
+                description: Invalid ID supplied
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            404:
+                description: Movie not found
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+                                    description: Response status type
+                                message:
+                                    type: string
+                                    description: Response Message
+    patch:
+        tags:
+            - Movies
+        summary: Update movie by ID
+        description: Updates a single movie
+        operationId: updateMovieInfo
+        x-eov-operation-id: updateMovieInfo
+        x-eov-operation-handler: movie
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
                             $ref: "../components/responses.yaml#/Movies/Movie"
-        400:
-            description: Invalid ID supplied
-        401:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
-        403:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
-        404:
-            description: Movie not found
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            status:
-                                type: string
-                                description: Response status type
-                            message:
-                                type: string
-                                description: Response Message
+            400:
+                description: Invalid ID supplied
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            404:
+                description: Movie not found
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+                                    description: Response status type
+                                message:
+                                    type: string
+                                    description: Response Message
+    delete:
+        tags:
+            - Movies
+        summary: Delete movie by ID
+        description: Deletes a single movie
+        operationId: deleteMovie
+        x-eov-operation-id: deleteMovie
+        x-eov-operation-handler: movie
+        responses:
+            201:
+                description: No content
+            400:
+                description: Invalid ID supplied
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            404:
+                description: Movie not found
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+                                    description: Response status type
+                                message:
+                                    type: string
+                                    description: Response Message

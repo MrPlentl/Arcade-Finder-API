@@ -1,111 +1,276 @@
-get:
-    tags:
-        - games
-    summary: Get a list of registered Video Games
-    description: The collection of video games
-    x-eov-operation-id: getGames
-    x-eov-operation-handler: game
+Collection:
+    get:
+        tags:
+            - Games
+        summary: Get a list of registered Video Games
+        description: The collection of video games
+        x-eov-operation-id: getGames
+        x-eov-operation-handler: game
+        parameters:
+            - $ref: "../components/parameters.yaml#/Games/SortBy"
+            - $ref: "../components/parameters.yaml#/Games/Search"
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                $ref: "../components/responses.yaml#/Games/Game"
+            400:
+                description: Invalid tag value
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Main error Message
+                                errors:
+                                    type: array
+                                    description: Error details
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+    post:
+        tags:
+            - Games
+        summary: Create a new game
+        description: Creates a new single game
+        operationId: createGame
+        x-eov-operation-id: createGame
+        x-eov-operation-handler: game
+        requestBody:
+            description: Create a new game in the database
+            content:
+                application/json:
+                    schema:
+                        $ref: "../components/requestBodies.yaml#/Game"
+            required: true
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            items:
+                                $ref: "../components/responses.yaml#/Games/Game"
+            400:
+                description: Invalid ID supplied
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            404:
+                description: Game not found
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+                                    description: Response status type
+                                message:
+                                    type: string
+                                    description: Response Message
+Single:
     parameters:
-        - in: query
-          $ref: "../components/parameters.yaml#/Games/SortBy"
-    responses:
-        200:
-            description: Successful operation
-            content:
-                application/json:
-                    schema:
-                        type: array
-                        items:
+        $ref: "../components/parameters.yaml#/Games/GameId"
+    get:
+        tags:
+            - Games
+        summary: Find game by ID
+        description: Returns a single game
+        operationId: getGameById
+        x-eov-operation-id: getGameById
+        x-eov-operation-handler: game
+        parameters:
+            - name: x-use-id
+              in: header
+              description: Set to 'true' to look up by numeric ID instead of slug
+              required: false
+              schema:
+                  type: string
+                  enum: ["true", "false"]
+            - name: x-include-igdb
+              in: header
+              description: Set to 'true' to include IGDB data in the response
+              required: false
+              schema:
+                  type: string
+                  enum: ["true", "false"]
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
                             $ref: "../components/responses.yaml#/Games/Game"
-        400:
-            description: Invalid tag value
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            message:
-                                type: string
-                                description: Main error Message
-                            errors:
-                                type: array
-                                description: Error details
-        401:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
-        403:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
-post:
-    tags:
-        - games
-    summary: Create a new game
-    description: Creates a new single game
-    operationId: createGame
-    x-eov-operation-id: createGame
-    x-eov-operation-handler: game
-    requestBody:
-        description: Create a new game in the database
-        content:
-            application/json:
-                schema:
-                    $ref: "../components/requestBodies.yaml#/Game"
-        required: true
-    responses:
-        200:
-            description: Successful operation
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        items:
+            400:
+                description: Invalid ID supplied
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            404:
+                description: Game not found
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+                                    description: Response status type
+                                message:
+                                    type: string
+                                    description: Response Message
+    patch:
+        tags:
+            - Games
+        summary: Update game by ID
+        description: Updates a single game
+        operationId: updateGameInfo
+        x-eov-operation-id: updateGameInfo
+        x-eov-operation-handler: game
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
                             $ref: "../components/responses.yaml#/Games/Game"
-        400:
-            description: Invalid ID supplied
-        401:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
-        403:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
-        404:
-            description: Game not found
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            status:
-                                type: string
-                                description: Response status type
-                            message:
-                                type: string
-                                description: Response Message
+            400:
+                description: Invalid ID supplied
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            404:
+                description: Game not found
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+                                    description: Response status type
+                                message:
+                                    type: string
+                                    description: Response Message
+    delete:
+        tags:
+            - Games
+        summary: Delete game by ID
+        description: Deletes a single game
+        operationId: deleteGame
+        x-eov-operation-id: deleteGame
+        x-eov-operation-handler: game
+        responses:
+            201:
+                description: No content
+            400:
+                description: Invalid ID supplied
+            401:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            403:
+                description: Authentication Failure
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    description: Error Message
+            404:
+                description: Game not found
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+                                    description: Response status type
+                                message:
+                                    type: string
+                                    description: Response Message

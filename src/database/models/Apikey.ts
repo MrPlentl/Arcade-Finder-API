@@ -1,20 +1,20 @@
 /**
  * Contains all the standard operations needed on the Apikey table
  *
- * @module Apikey Operations for the game table in the Arcade Locator DB
+ * @module Apikey Operations for the game table in the Arcade Finder DB
  * @version 1.1
  * @author R. Brandon Plentl <bplentl@gmail.com>
  * @date_inspected TBD
  */
-import { postgres } from "../connectors/index.js";
+import { postgres } from '../connectors/index.js';
 
 // 1. Define the shape of a row in the 'apikey' table
 export interface IApikey {
   id: number | string; // Supports Serial ID (number) or UUID (string)
   lookup_hash: string;
   hashed_key: string;
-  expires_at?: Date;   // Optional because it might be null in DB
-  created_at?: Date;   // Assuming you might have timestamps
+  expires_at?: Date; // Optional because it might be null in DB
+  created_at?: Date; // Assuming you might have timestamps
   updated_at?: Date;
 }
 
@@ -43,8 +43,8 @@ class Apikey {
 
     // Pass <IApikey> to .query so 'rows' is typed correctly
     const { rows } = await postgres.query<IApikey>(
-      "INSERT INTO apikey (lookup_hash, hashed_key) VALUES ($1, $2) RETURNING *",
-      [newApiKey.lookup_hash, newApiKey.hashed_key]
+      'INSERT INTO apikey (lookup_hash, hashed_key) VALUES ($1, $2) RETURNING *',
+      [newApiKey.lookup_hash, newApiKey.hashed_key],
     );
 
     return rows[0];
@@ -57,10 +57,7 @@ class Apikey {
    * @param id - The ID of the key
    */
   static async getById(id: number | string): Promise<IApikey | null> {
-    const { rows } = await postgres.query<IApikey>(
-      `SELECT * FROM apikey WHERE id = $1`,
-      [id]
-    );
+    const { rows } = await postgres.query<IApikey>(`SELECT * FROM apikey WHERE id = $1`, [id]);
 
     return rows[0] || null;
   }
@@ -73,7 +70,7 @@ class Apikey {
     // Note: Query selects specific columns, so we return Partial<IApikey>
     const { rows } = await postgres.query<IApikey>(
       `SELECT id, hashed_key, expires_at FROM apikey WHERE lookup_hash = $1`,
-      [lookupHash]
+      [lookupHash],
     );
 
     return rows[0] || null;

@@ -1,25 +1,25 @@
 {
-	"MissingApiKey": {
-		"code": 4001,
-		"httpStatusCode": 400,
-		"type": "Bad Request",
-		"message": "The ApiKey is missing from request body",
-		"details": {
-			"missing_field": "apikey"
-		}
-	},
-	"ApiKeyExpired": {
-		"code": 4002,
-		"httpStatusCode": 401,
-		"type": "Unauthorized",
-		"message": "ApiKey is invalid.",
-		"details": {
-			"bad_apikey": "The apikey you are using is invalid or has Expired. Generate a new apikey from your profile."
-		}
-	},
-	"Apikey.getByLookupHash": {
-		"httpStatusCode": 500,
-		"type": "Sql Error",
-		"message": "Internal Error: An error occured while fetching the apikey. Please try again later and contact Support if the problem presists."
-	}
+  "ApiKeyExpired": {
+    "code": 4002,
+    "httpStatusCode": 401,
+    "type": "Unauthorized",
+    "message": "apikey is invalid.",
+    "details": {
+      "bad_apikey": "The apikey you are using is invalid or has Expired. Generate a new apikey from your profile."
+    }
+  },
+  "MissingLoginHeader": {
+    "code": 4003,
+    "httpStatusCode": 400,
+    "type": "Bad Request",
+    "message": "The Login Header is missing from request headers",
+    "details": {
+      "missing_field": "x-xlr8r-login"
+    }
+  },
+  "Apikey.getByLookupHash": {
+    "httpStatusCode": 500,
+    "type": "Sql Error",
+    "message": "Internal Error: An error occured while fetching the apikey. Please try again later and contact Support if the problem presists."
+  }
 }

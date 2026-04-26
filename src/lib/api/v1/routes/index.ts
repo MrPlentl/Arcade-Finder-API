@@ -1,46 +1,23 @@
-import { Request, Response } from "express";
-import env from "../../../utils/environment.js";
-import { sampleMiddleware } from "../middleware/index.js";
+import { Request, Response } from 'express';
+import env from '../../../utils/environment.js';
+import { sampleMiddleware } from '../middleware/index.js';
+import { log4js } from '../../../../utils/log4js.js';
 
-import pkg from "pg";
-const { Pool } = pkg;
+const logger = log4js.getLogger('[routes|index]'); // Sets up the logger with the [app] string prefix
 
-const root = (req: Request, res: Response) => {
-	console.log("Root was HIT!");
-	const rootResponse = {
-		id: 12,
-		name: "Brandon Plentl",
-	};
-	return res.status(200).send(JSON.stringify(rootResponse));
-};
-
-// TESTING ENDPOINTS
-const pong = async (req: Request, res: Response) => {
-	console.log("[INDEX] WORKING PONG NEW!");
-
-	const pool = new Pool({
-		user: env.DB_USERNAME,
-		host: env.DB_HOSTNAME,
-		database: env.DB_NAME,
-		password: env.DB_PASSWORD,
-		port: parseInt(env.DB_PORT || "5432"),
-	});
-
-	async function queryDatabase() {
-		try {
-			const res = await pool.query("SELECT * FROM venue");
-			console.log(res.rows);
-		} catch (err: any) {
-			console.error(err);
-		}
-	}
-
-	queryDatabase();
-
-	return res.status(200).send("PING");
+const getIndex = (req: Request, res: Response) => {
+  logger.trace('getIndex');
+  const indexResponse = {
+    message: 'Welcome to the Arcade Finder API!',
+    details: {
+      name: env.APP_NAME || 'Arcade Finder API',
+      version: '0.2.1',
+      documentation: 'http://localhost:8080/specs.html',
+    },
+  };
+  return res.status(200).send(JSON.stringify(indexResponse));
 };
 
 export default {
-	pong: [sampleMiddleware, pong],
-	root: [sampleMiddleware, root],
+  getIndex: [sampleMiddleware, getIndex],
 };

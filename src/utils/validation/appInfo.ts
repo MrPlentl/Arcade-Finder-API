@@ -37,15 +37,15 @@ export const printAppInfo = () => {
     Name: pkg.name,
     Version: pkg.version,
     PID: process.pid,
-    
+
     // Environment
     Environment: process.env.APP_ENV || 'local',
     NodeEnv: process.env.NODE_ENV || 'development',
-    LogLevel: process.env.LOG_LEVEL || 'info',
-    
+    LogLevel: process.env.APP_LOG_LEVEL || 'info',
+
     // Build (Assumes you set these env vars in your CI/CD pipeline)
     Commit: (process.env.GIT_COMMIT || 'unknown').substring(0, 7),
-    
+
     // Connectivity
     Port: process.env.PORT || 3000,
     DB_HOSTNAME: maskSecret(process.env.DATABASE_URL || process.env.DB_HOSTNAME),

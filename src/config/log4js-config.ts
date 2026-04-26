@@ -1,24 +1,24 @@
-import "dotenv/config";
+import 'dotenv/config';
+import { Configuration } from 'log4js';
 
-// eslint-disable-next-line no-undef
-const logLevel = process.env.APP_LOG_LEVEL ?? "info";
+const logLevel: string = process.env.APP_LOG_LEVEL ?? 'info';
 
-export const log4jsConfig = {
+export const log4jsConfig: Configuration = {
   appenders: {
     everything: {
-      type: "dateFile",
-      filename: "./logs/daily.log",
+      type: 'dateFile',
+      filename: './logs/daily.log',
       keepFileExt: true,
-      fileNameSep: "_",
+      fileNameSep: '_',
       numBackups: 30,
     },
     out: {
-      type: "stdout",
+      type: 'stdout',
     },
   },
   categories: {
     default: {
-      appenders: ["everything", "out"],
+      appenders: ['everything', 'out'],
       level: logLevel,
     },
   },

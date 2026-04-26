@@ -1,4 +1,5 @@
-import { Request } from "express";
+import { Request } from 'express';
+import { EXTERNAL_LINKS } from './constants.js';
 
 /**
  * Determines whether a given date or timestamp has already passed.
@@ -10,15 +11,15 @@ import { Request } from "express";
  * @returns {boolean} True if the date is in the past or invalid; otherwise, false.
  */
 export function hasExpiredDate(date: string | Date): boolean {
-	if (!date) return true;
+  if (!date) return true;
 
-	// Normalize common SQL-style timestamps ("YYYY-MM-DD HH:mm:ss") to ISO ("YYYY-MM-DDTHH:mm:ss")
-	const dateStr = typeof date === "string" ? date.replace(" ", "T") : date;
+  // Normalize common SQL-style timestamps ("YYYY-MM-DD HH:mm:ss") to ISO ("YYYY-MM-DDTHH:mm:ss")
+  const dateStr = typeof date === 'string' ? date.replace(' ', 'T') : date;
 
-	const givenDate = new Date(dateStr);
-	if (isNaN(givenDate.getTime())) return true; // invalid date string
+  const givenDate = new Date(dateStr);
+  if (isNaN(givenDate.getTime())) return true; // invalid date string
 
-	return givenDate < new Date();
+  return givenDate < new Date();
 }
 
 /**
@@ -31,17 +32,17 @@ export function hasExpiredDate(date: string | Date): boolean {
  * @returns {string | undefined} The client’s IP address, or `undefined` if unavailable.
  */
 export const getClientIP = (req: Request): string | undefined => {
-	if (!req) return undefined;
+  if (!req) return undefined;
 
-	// Check for proxy or load balancer forwarded IPs (comma-separated list)
-	const forwardedFor = req.headers["x-forwarded-for"];
-	if (typeof forwardedFor === "string") {
-		const ip = forwardedFor.split(",")[0].trim();
-		if (ip) return ip;
-	}
+  // Check for proxy or load balancer forwarded IPs (comma-separated list)
+  const forwardedFor = req.headers['x-forwarded-for'];
+  if (typeof forwardedFor === 'string') {
+    const ip = forwardedFor.split(',')[0].trim();
+    if (ip) return ip;
+  }
 
-	// Fallback: use the direct socket connection address
-	return req.socket?.remoteAddress;
+  // Fallback: use the direct socket connection address
+  return req.socket?.remoteAddress;
 };
 
 /**
@@ -57,47 +58,52 @@ export const getClientIP = (req: Request): string | undefined => {
  * @returns {number} The computed length or size of the value.
  */
 export const getLength = (value: any): number => {
-	if (value == null) return 0; // null or undefined
+  if (value == null) return 0; // null or undefined
 
-	if (typeof value === "string" || Array.isArray(value)) {
-		return value.length;
-	}
+  if (typeof value === 'string' || Array.isArray(value)) {
+    return value.length;
+  }
 
-	if (value instanceof Map || value instanceof Set) {
-		return value.size;
-	}
+  if (value instanceof Map || value instanceof Set) {
+    return value.size;
+  }
 
-	if (typeof value === "object") {
-		return Object.keys(value).length;
-	}
+  if (typeof value === 'object') {
+    return Object.keys(value).length;
+  }
 
-	if (typeof value === "number" && !isNaN(value)) {
-		// Count digits only (ignore negative sign and decimal point)
-		return value.toString().replace(/[-.]/g, "").length;
-	}
+  if (typeof value === 'number' && !isNaN(value)) {
+    // Count digits only (ignore negative sign and decimal point)
+    return value.toString().replace(/[-.]/g, '').length;
+  }
 
-	return 0;
+  return 0;
 };
 
 /**
  * Returns a standardized API response as a JSON string.
  *
- * If the response contains an `error` property, it returns the original object stringified.
- * Otherwise, it returns an object with an optional `count` (length of `resp`) and `data`.
+ * Returns an object with an optional `count` (length of `resp`) and `data`.
  *
- * @param {any} resp - The response data or error object.
+ * @param {unknown} resp - The response data
  * @param {boolean} [includeCount=true] - Whether to include a `count` property.
  * @returns {string} The standardized API response as a JSON string.
  */
-export const standardResponse = (resp: any, includeCount = true): string => {
-	if (resp?.error) {
-		return JSON.stringify(resp);
-	}
+export const standardResponse = (resp: unknown, includeCount: boolean = true): string => {
+  const responseObj = {
+    ...(includeCount && resp != null && { count: getLength(resp) }),
+    data: resp ?? null, // ensure data is never undefined
+  };
 
-	const responseObj = {
-		...(includeCount && { count: getLength(resp) }),
-		data: resp ?? null, // ensure data is never undefined
-	};
+  return JSON.stringify(responseObj);
+};
 
-	return JSON.stringify(responseObj);
+// Builds an external link for a given source and ID
+export const buildExternalLink = (source: string, id: string | number | null): string | null => {
+  if (!id) return null;
+
+  const baseUrl = EXTERNAL_LINKS[source as keyof typeof EXTERNAL_LINKS];
+  if (!baseUrl) return null;
+
+  return `${baseUrl}${id}`;
 };

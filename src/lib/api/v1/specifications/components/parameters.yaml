@@ -5,12 +5,16 @@ Games:
           required: true
           description: ID of game to return
           schema:
-              type: integer
-              format: int64
-              maximum: 32767
-              minimum: 1
+            anyOf:
+              - type: integer
+                format: int64
+                maximum: 10000
+                minimum: 1
+              - type: string
+                description: The slug of the game to return
     SortBy:
         name: sortBy
+        in: query
         description: Sort values that need to be considered for filter
         required: false
         schema:
@@ -20,6 +24,13 @@ Games:
                 - id
                 - name
                 - year
+    Search:
+        name: search
+        in: query
+        description: Search for games
+        required: false
+        schema:
+            type: string
 Movies:
     MovieId:
         - in: path
@@ -27,10 +38,13 @@ Movies:
           required: true
           description: ID of movie to return
           schema:
-              type: integer
-              format: int64
-              maximum: 32767
-              minimum: 1
+            anyOf:
+              - type: integer
+                format: int64
+                maximum: 32767
+                minimum: 1
+              - type: string
+                description: The slug of the movie to return
     SortBy:
         name: sortBy
         description: Sort values that need to be considered for filter
@@ -64,26 +78,29 @@ Shows:
                 - id
                 - name
                 - year
-VenueSearch:
+Venues:
     Zip:
         name: zip
-        description: The zip code to search within.
+        in: query
+        description: Zip code to search near
         required: false
         schema:
             type: integer
+    Name:
+        name: name
+        in: query
+        description: Name of the venue
+        required: false
+        schema:
+            type: string
     Distance:
         name: distance
-        description: The maximum distance (in miles) from the specified zip code.
+        in: query
+        description: Search radius distance
         required: false
         schema:
             type: integer
             minimum: 1
-    Name:
-        name: name
-        description: Filter venues by name (case-insensitive substring match).
-        required: false
-        schema:
-            type: string
 Venue:
     Id:
         - in: path
@@ -93,5 +110,5 @@ Venue:
           schema:
               type: integer
               format: int64
-              maximum: 32767
+              maximum: 10000
               minimum: 1

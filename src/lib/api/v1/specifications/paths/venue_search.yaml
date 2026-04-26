@@ -1,56 +1,56 @@
-get:
-    tags:
-        - core
-    summary: Search Venues for matches with the given query parameters
-    description: Collection of venues based on query
-    x-eov-operation-id: getVenuesByParams
-    x-eov-operation-handler: venue
-    parameters:
-        - in: query
-          $ref: "../components/parameters.yaml#/VenueSearch/Zip"
-        - in: query
-          $ref: "../components/parameters.yaml#/VenueSearch/Distance"
-        - in: query
-          $ref: "../components/parameters.yaml#/VenueSearch/Name"
-    responses:
-        200:
-            description: Successful operation
-            content:
-                application/json:
-                    schema:
-                        type: array
-                        items:
-                            $ref: "../components/responses.yaml#/Venues/Venue"
-        400:
-            description: Invalid tag value
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            message:
-                                type: string
-                                description: Main error Message
-                            errors:
-                                type: array
-                                description: Error details
-        401:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
-        403:
-            description: Authentication Failure
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            error:
-                                type: string
-                                description: Error Message
+# get:
+#     tags:
+#         - Venues
+#     summary: Search Venues for matches with the given query parameters
+#     description: Collection of venues based on query
+#     x-eov-operation-id: getVenuesByParams
+#     x-eov-operation-handler: venue
+#     parameters:
+#         - in: query
+#           $ref: "../components/parameters.yaml#/VenueSearch/Zip"
+#         - in: query
+#           $ref: "../components/parameters.yaml#/VenueSearch/Distance"
+#         - in: query
+#           $ref: "../components/parameters.yaml#/VenueSearch/Name"
+#     responses:
+#         200:
+#             description: Successful operation
+#             content:
+#                 application/json:
+#                     schema:
+#                         type: array
+#                         items:
+#                             $ref: "../components/responses.yaml#/Venues/Venue"
+#         400:
+#             description: Invalid tag value
+#             content:
+#                 application/json:
+#                     schema:
+#                         type: object
+#                         properties:
+#                             message:
+#                                 type: string
+#                                 description: Main error Message
+#                             errors:
+#                                 type: array
+#                                 description: Error details
+#         401:
+#             description: Authentication Failure
+#             content:
+#                 application/json:
+#                     schema:
+#                         type: object
+#                         properties:
+#                             error:
+#                                 type: string
+#                                 description: Error Message
+#         403:
+#             description: Authentication Failure
+#             content:
+#                 application/json:
+#                     schema:
+#                         type: object
+#                         properties:
+#                             error:
+#                                 type: string
+#                                 description: Error Message

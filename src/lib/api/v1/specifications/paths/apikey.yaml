@@ -1,6 +1,6 @@
 post:
     tags:
-        - authentication
+        - Authentication
     summary: Create a new ApiKey with User ID
     description: Incoming request to create an Api Key using an apikey
     operationId: createApiKey

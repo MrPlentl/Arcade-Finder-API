@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-    title: Arcade Locator API - ADMIN
+    title: Arcade Finder API - ADMIN
     description: |-
         This is the admin routes
     termsOfService: http://swagger.io/terms/
@@ -11,14 +11,14 @@ info:
         url: https://www.gnu.org/licenses/gpl-3.0.en.html
     version: 0.0.01
 externalDocs:
-    description: Find out more about the Arcade Locator API
+    description: Find out more about the Arcade Finder API
     url: http://swagger.io
 servers:
     - url: /oni-admin
       description: All API endpoints are relative to the base URL.
 tags:
     - name: admin
-      description: ADMIN Operations of the Arcade Locator API
+      description: ADMIN Operations of the Arcade Finder API
 paths:
     /validate/{action}:
         $ref: "./paths/validate.yaml"

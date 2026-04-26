@@ -1,34 +1,38 @@
-import { readFileSync } from "fs";
+import { readFileSync } from 'fs';
 
-import { log4js } from "../../../utils/log4js.js";
-const logger = log4js.getLogger("[utils|error]"); // Sets up the logger with the [app] string prefix
+import { log4js } from '../../../utils/log4js.js';
+const logger = log4js.getLogger('[utils|error]'); // Sets up the logger with the [app] string prefix
 
-const errors = JSON.parse(
-	readFileSync("./src/lib/api/utils/errors/errors.json", "utf-8"),
-);
+const errors = JSON.parse(readFileSync('./src/lib/api/utils/errors/errors.json', 'utf-8'));
 
 export interface CustomError extends Error {
-    httpStatusCode?: number;
-    code?: number;
-    type?: string;
-    details?: any;
+  httpStatusCode?: number;
+  code?: number | string;
+  type?: string;
+  details?: any;
+}
+export interface SqlErrorPayload extends Error {
+  type: string;
+  code: string | number;
+  message: string;
+  details?: string | object;
 }
 
 export function predefinedError(errorName: string): CustomError {
-	const err: CustomError = new Error();
-	if (errors[errorName]) {
-		Object.entries(errors[errorName]).forEach(([key, value]) => {
-			(err as any)[key] = value;
-		});
-	} else {
-		err.message = `Unknown Error: ${errorName}`;
-	}
+  const err: CustomError = new Error();
+  if (errors[errorName]) {
+    Object.entries(errors[errorName]).forEach(([key, value]) => {
+      (err as any)[key] = value;
+    });
+  } else {
+    err.message = `Unknown Error: ${errorName}`;
+  }
 
-	return err;
+  return err;
 }
 
 export function handleError(message: string, error = 400) {
-	console.log(message, error);
+  console.log(message, error);
 }
 
 // Standard Way
@@ -45,33 +49,49 @@ export function handleError(message: string, error = 400) {
 // throw newError;
 
 export function formatErrorResponse(error: CustomError | string | undefined): [number, any] {
-	if (typeof error === "string") {
-		error = new Error(error) as CustomError;
-	}
+  if (typeof error === 'string') {
+    error = new Error(error) as CustomError;
+  }
 
-    if (!error) {
-        error = new Error("Unknown Error") as CustomError;
-    }
+  if (!error) {
+    error = new Error('Unknown Error') as CustomError;
+  }
 
-	const statusCode = error?.httpStatusCode ?? 500;
-	const errorResp = {
-		error: {
-			type: error?.type ?? "Error",
-			code: error?.code ?? 500,
-			message: error?.message ? error?.message : "Unknown Error",
-			details: error?.details ?? "No additional information available",
-		},
-	};
+  const statusCode = error?.httpStatusCode ?? 500;
+  const errorResp = {
+    error: {
+      type: error?.type ?? 'Error',
+      code: error?.code ?? 500,
+      message: error?.message ? error?.message : 'Unknown Error',
+      details: error?.details ?? 'No additional information available',
+    },
+  };
 
-	logger.error(
-		`[${statusCode}] ${errorResp.error.type}: ${errorResp.error.message}`,
-	);
-	return [statusCode, errorResp];
+  logger.error(`[${statusCode}] ${errorResp.error.type}: ${errorResp.error.message}`);
+  return [statusCode, errorResp];
 }
 
-export function sqlError(error: CustomError, msg = "Undefined"): CustomError {
-	error.type = "SQL Error";
-	error.details = { sql_error: error.message };
-	error.message = msg;
-	return error;
+/**
+ * Formats a SQL error into a standardized error response
+ *
+ * @param error
+ * @param msg
+ * @returns
+ */
+export function sqlError(error: SqlErrorPayload, msg = 'Undefined'): CustomError {
+  // Log the full, sensitive SQL error and stack trace internally
+  logger.error(`[SQL Error: ${error.code}]: ${error.message}`);
+  if (error.stack) {
+    logger.trace(error.stack);
+  }
+
+  // Return a sanitized, generic error object for the user response
+  const safeError = new Error(msg) as CustomError;
+  safeError.type = 'Server Error';
+  safeError.httpStatusCode = 500;
+  safeError.code = error.code || 500;
+  safeError.details =
+    "There's nothing you can do here. The API just flashed 'INSERT DB ENGINEER' and ate the last credit.";
+
+  return safeError;
 }

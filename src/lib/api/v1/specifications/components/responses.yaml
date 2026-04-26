@@ -3,14 +3,14 @@ Games:
         type: object
         required:
             - id
-            - title
+            - name
             - type
         properties:
             id:
                 type: integer
                 format: int64
                 examples: [10]
-            title:
+            name:
                 type: string
                 examples: ["Pac-Man"]
             type:
@@ -67,7 +67,74 @@ Show:
             type: string
             examples: ["super-mario-bros"]
 Venues:
-    Venue:
+    Collection:
+        type: object
+        required:
+            - count
+            - data
+        properties:
+            count:
+                type: integer
+                examples: [14]
+            data:
+                type: array
+                items:
+                    type: object
+                    properties:
+                        id:
+                            type: integer
+                            examples: [1]
+                        destination:
+                            type: integer
+                            examples: [76148]
+                        distance:
+                            type: string
+                            examples: ["2.4"]
+                        name:
+                            type: string
+                            examples: ["Electric Starship Arcade"]
+                        slug:
+                            type: string
+                            examples: ["electric-starship-arcade"]
+                        verified:
+                            type: boolean
+                            examples: [false]
+                        venue_type:
+                            type: string
+                            examples: ["Traditional Arcade"]
+                        venue_type_description:
+                            type: string
+                            examples: ["Arcade focus with Beer"]
+                        status:
+                            type: string
+                            examples: ["Open"]
+                        street:
+                            type: string
+                            examples: ["5620 Denton Hwy"]
+                        city:
+                            type: string
+                            examples: ["Haltom City"]
+                        state:
+                            type: string
+                            examples: ["TX"]
+                        zip:
+                            type: integer
+                            examples: [76148]
+                        coordinates:
+                            type: string
+                            examples: ["32.8524, -97.2625"]
+                        plus_code:
+                            type: string
+                            examples: ["RQCQ+X3 Haltom City, Texas"]
+                        parking_fee:
+                            type: ["number", "null"]
+                        parking_type:
+                            type: string
+                            examples: ["Parking Lot (large)"]
+                        parking_description:
+                            type: string
+                            examples: ["A large parking lot: where you park near a landmark, forget it anyway, and get your daily steps in just trying to find your car."]
+    Single:
         type: object
         required:
             - id
@@ -77,16 +144,98 @@ Venues:
             id:
                 type: integer
                 format: int64
-                examples: [10]
+                examples: [167]
             name:
                 type: string
-                examples: ["Electric Starship Arcade"]
+                examples: ["Time Rift"]
             slug:
                 type: string
-                examples: ["electric-starship-arcade"]
+                examples: ["time-rift"]
+            verified:
+                type: boolean
+                examples: [false]
+            type:
+                type: integer
+                examples: [1]
             status:
-                type: string
-                examples: ["Open", "Closed", "Unknown"]
-            types:
-                type: string
-                examples: ["Traditional Arcade", "Barcade", "Redemption"]
+                type: integer
+                examples: [1]
+            inventory:
+                type: object
+                properties:
+                    total:
+                        type: integer
+                        examples: [146]
+                    items:
+                        type: array
+                        items:
+                            type: object
+                            properties:
+                                id:
+                                    type: integer
+                                    examples: [4587]
+                                name:
+                                    type: string
+                                    examples: ["Avengers: Infinity Quest (Stern)"]
+                                slug:
+                                    type: string
+                                    examples: ["avengers-infinity-quest-stern"]
+                                igdb_id:
+                                    type: ["integer", "null"]
+                                    examples: [124431]
+                                image_url:
+                                    type: ["string", "null"]
+                                    examples: ["//images.igdb.com/igdb/image/upload/t_thumb/co6mcz.jpg"]
+                                cover_image:
+                                    type: ["string", "null"]
+                                    examples: ["//images.igdb.com/igdb/image/upload/t_thumb/co6mcz.jpg"]
+            location:
+                type: object
+                properties:
+                    zip:
+                        type: integer
+                        examples: [76021]
+                    city:
+                        type: string
+                        examples: ["Bedford"]
+                    state:
+                        type: string
+                        examples: ["TX"]
+                    street:
+                        type: string
+                        examples: ["2113 Harwood Rd suite 351"]
+                    plus_code:
+                        type: string
+                        examples: ["VV39+F3 Bedford, Texas"]
+                    created_at:
+                        type: string
+                        format: date-time
+                        examples: ["2026-04-23T14:04:32.562-05:00"]
+                    created_by:
+                        type: integer
+                        examples: [1]
+                    updated_at:
+                        type: ["string", "null"]
+                        format: date-time
+                    updated_by:
+                        type: ["integer", "null"]
+                    coordinates:
+                        type: string
+                        examples: ["32.853656588750646, -97.13232506137112"]
+                    parking_fee:
+                        type: ["number", "null"]
+                    parking_type:
+                        type: integer
+                        examples: [2]
+            hours:
+                type: array
+                items:
+                    type: object
+            menus:
+                type: array
+                items:
+                    type: object
+            pricing:
+                type: array
+                items:
+                    type: object

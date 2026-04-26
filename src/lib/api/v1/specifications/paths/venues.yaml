@@ -1,0 +1,78 @@
+Collection:
+    get:
+        tags:
+            - Venues
+        summary: Search Venues for matches with the given query parameters
+        description: Collection of venues based on query. **Note:** You must provide at least `zip` or `name` (or both) to perform a search.
+        x-eov-operation-id: getVenues
+        x-eov-operation-handler: venue
+        parameters:
+            - $ref: "../components/parameters.yaml#/Venues/Zip"
+            - $ref: "../components/parameters.yaml#/Venues/Name"
+            - $ref: "../components/parameters.yaml#/Venues/Distance"
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../components/responses.yaml#/Venues/Collection"
+            400:
+                description: Validation Error
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: object
+                                    properties:
+                                        type:
+                                            type: string
+                                            example: "Validation Error"
+                                        code:
+                                            type: integer
+                                            example: 400
+                                        message:
+                                            type: string
+                                            description: Main error Message
+                                        details:
+                                            type: array
+                                            description: Error details
+                                            items:
+                                                type: object
+                                                properties:
+                                                    path:
+                                                        type: string
+                                                        example: "/query/zips"
+                                                    message:
+                                                        type: string
+                                                        example: "Unknown query parameter 'zips'"
+Single:
+    get:
+        tags:
+            - Venues
+        summary: Search Venues for matches with the given query parameters
+        description: Collection of venues based on query
+        x-eov-operation-id: getVenueById
+        x-eov-operation-handler: venue
+        parameters:
+          - name: include
+            in: query
+            description: Comma-separated list of optional data to include (e.g., inventory)
+            required: false
+            schema:
+              type: array
+              items:
+                type: string
+                enum: [inventory, location]
+              example: ["inventory"]
+            style: form
+            explode: false
+        responses:
+            200:
+                description: Successful operation
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../components/responses.yaml#/Venues/Single"

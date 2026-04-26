@@ -1,0 +1,52 @@
+post:
+    tags:
+        - Authentication
+    summary: Create a new user account
+    description: Incoming request to create a new user account
+    x-eov-operation-id: createUserAccount
+    x-eov-operation-handler: auth
+    requestBody:
+        description: User registration details
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    required:
+                        - username
+                        - password
+                        - email
+                    properties:
+                        username:
+                            type: string
+                            minLength: 3
+                            example: "jdoe84"
+                        password:
+                            type: string
+                            format: password
+                            minLength: 8
+                            example: "P@ssword123!"
+                        email:
+                            type: string
+                            format: email
+                            example: "jdoe84@example.com"
+    responses:
+        201:
+            description: User created successfully
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                            display_name:
+                                type: string
+                            email:
+                                type: string
+                            created_at:
+                                type: string
+        400:
+          description: Bad Request (Validation failed)
+        409:
+          description: Conflict (Username or email already exists)

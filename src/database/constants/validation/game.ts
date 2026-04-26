@@ -1,7 +1,1 @@
-export const VALID_GAME_FIELDS = [
-	"title",
-	"type",
-	"igdb_id",
-	"igdb_slug",
-	"updated_by",
-];
+export const VALID_GAME_FIELDS: string[] = ['name', 'type', 'igdb_id', 'created_by', 'updated_by'];
