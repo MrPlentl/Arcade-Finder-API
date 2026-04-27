@@ -17,7 +17,7 @@ export async function up(queryInterface, Sequelize) {
     },
     name: { type: Sequelize.STRING(50), allowNull: false },
     description: { type: Sequelize.STRING(50) },
-    phone: { type: Sequelize.STRING(10) },
+    phone: { type: Sequelize.STRING(20) },
     email: { type: Sequelize.STRING(250) },
     website: { type: Sequelize.STRING(250) },
     updated_by: {

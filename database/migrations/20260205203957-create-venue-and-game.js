@@ -57,6 +57,11 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.literal("DATE_TRUNC('second', NOW())"),
     },
     updated_at: { type: Sequelize.DATE },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   });
 
   await queryInterface.addIndex('venue', ['status', 'type'], {
@@ -128,6 +133,11 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.literal("DATE_TRUNC('second', NOW())"),
     },
     updated_at: { type: Sequelize.DATE },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   });
 
   await queryInterface.addConstraint('game', {
@@ -159,59 +169,42 @@ export async function up(queryInterface, Sequelize) {
 
   // 3. Create functions and triggers
   await queryInterface.sequelize.query(`
-		CREATE FUNCTION function_generate_unique_slug_for_venue()
-		RETURNS TRIGGER AS $$
-		DECLARE
-			base_slug TEXT;
-			final_slug TEXT;
-			counter INTEGER := 1;
-		BEGIN
-			base_slug := lower(regexp_replace(NEW.name, '[^a-zA-Z0-9]+', '-', 'g'));
-			base_slug := trim(both '-' from base_slug);
-			
-			final_slug := base_slug;
+    CREATE FUNCTION function_generate_unique_slug()
+    RETURNS TRIGGER AS $$
+    DECLARE
+      base_slug TEXT;
+      final_slug TEXT;
+      counter INTEGER := 1;
+      slug_exists BOOLEAN;
+    BEGIN
+      base_slug := lower(regexp_replace(NEW.name, '[^a-zA-Z0-9]+', '-', 'g'));
+      base_slug := trim(both '-' from base_slug);
+      
+      final_slug := base_slug;
 
-			WHILE EXISTS (SELECT 1 FROM "venue" WHERE slug = final_slug AND id IS DISTINCT FROM NEW.id) LOOP
-				final_slug := base_slug || '-' || counter;
-				counter := counter + 1;
-			END LOOP;
+      LOOP
+        EXECUTE format('SELECT EXISTS (SELECT 1 FROM %I WHERE slug = $1 AND id IS DISTINCT FROM $2)', TG_TABLE_NAME)
+        INTO slug_exists
+        USING final_slug, NEW.id;
 
-			NEW.slug := final_slug;
-			RETURN NEW;
-		END;
-		$$ LANGUAGE plpgsql;
-	`);
+        EXIT WHEN NOT slug_exists;
 
-  await queryInterface.sequelize.query(`
-		CREATE FUNCTION function_generate_unique_slug_for_game()
-		RETURNS TRIGGER AS $$
-		DECLARE
-			base_slug TEXT;
-			final_slug TEXT;
-			counter INTEGER := 1;
-		BEGIN
-			base_slug := lower(regexp_replace(NEW.name, '[^a-zA-Z0-9]+', '-', 'g'));
-			base_slug := trim(both '-' from base_slug);
-			
-			final_slug := base_slug;
+        final_slug := base_slug || '-' || counter;
+        counter := counter + 1;
+      END LOOP;
 
-			WHILE EXISTS (SELECT 1 FROM "game" WHERE slug = final_slug AND id IS DISTINCT FROM NEW.id) LOOP
-				final_slug := base_slug || '-' || counter;
-				counter := counter + 1;
-			END LOOP;
-
-			NEW.slug := final_slug;
-			RETURN NEW;
-		END;
-		$$ LANGUAGE plpgsql;
-	`);
+      NEW.slug := final_slug;
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+  `);
 
   await queryInterface.sequelize.query(`
     CREATE TRIGGER trigger_set_venue_slug
     BEFORE INSERT ON venue
     FOR EACH ROW
     WHEN (NEW.slug IS NULL)
-    EXECUTE FUNCTION function_generate_unique_slug_for_venue();
+    EXECUTE FUNCTION function_generate_unique_slug();
   `);
 
   await queryInterface.sequelize.query(`
@@ -219,7 +212,7 @@ export async function up(queryInterface, Sequelize) {
     BEFORE INSERT ON game
     FOR EACH ROW
     WHEN (NEW.slug IS NULL)
-    EXECUTE FUNCTION function_generate_unique_slug_for_game();
+    EXECUTE FUNCTION function_generate_unique_slug();
   `);
 
   await queryInterface.sequelize.query(`
@@ -245,9 +238,8 @@ export async function down(queryInterface) {
     'DROP TRIGGER IF EXISTS trigger_set_venue_updated_at ON venue',
   );
   await queryInterface.sequelize.query('DROP TRIGGER IF EXISTS trigger_set_venue_slug ON venue');
-  await queryInterface.sequelize.query('DROP FUNCTION IF EXISTS generate_unique_slug_for_venue()');
   await queryInterface.sequelize.query('DROP TRIGGER IF EXISTS trigger_set_game_slug ON game');
-  await queryInterface.sequelize.query('DROP FUNCTION IF EXISTS generate_unique_slug_for_game()');
+  await queryInterface.sequelize.query('DROP FUNCTION IF EXISTS function_generate_unique_slug()');
   await queryInterface.dropTable('game');
   await queryInterface.dropTable('venue');
 }

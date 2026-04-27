@@ -22,6 +22,11 @@ export async function up(queryInterface, Sequelize) {
       type: Sequelize.STRING(250),
       allowNull: true,
     },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   });
   // Unique constraint on movie name/year
   await queryInterface.addConstraint('movie', {
@@ -34,7 +39,7 @@ export async function up(queryInterface, Sequelize) {
   await queryInterface.createTable('movie_links', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     movie_id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.SMALLINT,
       references: { model: 'movie', key: 'id' },
     },
     game_id: {
@@ -66,6 +71,11 @@ export async function up(queryInterface, Sequelize) {
     year: { type: Sequelize.SMALLINT },
     link_imdb: { type: Sequelize.STRING(250) },
     link_justwatch: { type: Sequelize.STRING(250) },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   });
 
   // 2. Show Links (Join Table)
@@ -115,35 +125,11 @@ export async function up(queryInterface, Sequelize) {
   });
 
   await queryInterface.sequelize.query(`
-		CREATE FUNCTION function_generate_unique_slug_for_movie()
-		RETURNS TRIGGER AS $$
-		DECLARE
-			base_slug TEXT;
-			final_slug TEXT;
-			counter INTEGER := 1;
-		BEGIN
-			base_slug := lower(regexp_replace(NEW.name, '[^a-zA-Z0-9]+', '-', 'g'));
-			base_slug := trim(both '-' from base_slug);
-			
-			final_slug := base_slug;
-
-			WHILE EXISTS (SELECT 1 FROM "movie" WHERE slug = final_slug AND id IS DISTINCT FROM NEW.id) LOOP
-				final_slug := base_slug || '-' || counter;
-				counter := counter + 1;
-			END LOOP;
-
-			NEW.slug := final_slug;
-			RETURN NEW;
-		END;
-		$$ LANGUAGE plpgsql;
-	`);
-
-  await queryInterface.sequelize.query(`
     CREATE TRIGGER trigger_set_movie_slug
     BEFORE INSERT ON movie
     FOR EACH ROW
     WHEN (NEW.slug IS NULL)
-    EXECUTE FUNCTION function_generate_unique_slug_for_movie();
+    EXECUTE FUNCTION function_generate_unique_slug();
   `);
 
   // This function inserts a record into user_roles using the ID of the newly created user

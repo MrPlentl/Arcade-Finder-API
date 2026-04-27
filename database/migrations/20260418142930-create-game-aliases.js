@@ -24,7 +24,6 @@ export async function up(queryInterface, Sequelize) {
     },
   });
 
-  // CRITICAL: Add an index for speed
   await queryInterface.addIndex('game_aliases', ['name_variant']);
 }
 export async function down(queryInterface) {

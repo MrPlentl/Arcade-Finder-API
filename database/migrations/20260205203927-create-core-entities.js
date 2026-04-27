@@ -1,7 +1,7 @@
 'use strict';
 
 export async function up(queryInterface, Sequelize) {
-  // 1. Zipcodes
+  // Zipcodes
   await queryInterface.createTable('zipcode', {
     id: {
       allowNull: false,
@@ -14,7 +14,39 @@ export async function up(queryInterface, Sequelize) {
     },
   });
 
-  // 2. Users
+  // Apikey Table
+  await queryInterface.createTable('apikey', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+    },
+    lookup_hash: {
+      type: Sequelize.CHAR(16),
+      allowNull: false,
+      unique: true,
+    },
+    hashed_key: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+    },
+    created_at: {
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.literal("DATE_TRUNC('second', NOW())"),
+    },
+    expires_at: {
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.literal("DATE_TRUNC('second', NOW() + INTERVAL '6 months')"),
+    },
+  });
+
+  // Adding the index for lookup performance as seen in the SQL dump
+  await queryInterface.addIndex('apikey', ['lookup_hash'], {
+    name: 'idx_lookup_hash',
+  });
+
+  // Users
   await queryInterface.createTable('users', {
     id: {
       allowNull: false,
@@ -35,6 +67,10 @@ export async function up(queryInterface, Sequelize) {
     },
     apikey_id: {
       type: Sequelize.INTEGER,
+      references: {
+        model: 'apikey',
+        key: 'id',
+      },
     },
     deleted: {
       type: Sequelize.BOOLEAN,
@@ -90,6 +126,7 @@ export async function down(queryInterface) {
     'DROP TRIGGER IF EXISTS trigger_set_users_updated_at ON users',
   );
   await queryInterface.dropTable('users');
+  await queryInterface.dropTable('apikey');
   await queryInterface.dropTable('zipcode');
   await queryInterface.dropTable('igdb');
 }
