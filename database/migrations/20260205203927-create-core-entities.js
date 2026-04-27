@@ -23,7 +23,7 @@ export async function up(queryInterface, Sequelize) {
       type: Sequelize.INTEGER,
     },
     lookup_hash: {
-      type: Sequelize.CHAR(16),
+      type: Sequelize.STRING(16),
       allowNull: false,
       unique: true,
     },
